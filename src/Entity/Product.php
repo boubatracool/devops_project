@@ -36,6 +36,9 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $state = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $etat = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -114,6 +117,18 @@ class Product
     public function setState(?string $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?string $etat): static
+    {
+        $this->etat = $etat;
 
         return $this;
     }

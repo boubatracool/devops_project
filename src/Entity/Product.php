@@ -37,7 +37,17 @@ class Product
     private ?string $state = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $etat = null;
+    private ?string $marque = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $modele = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $size = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $color = null;
+
 
     public function getId(): ?int
     {
@@ -121,14 +131,50 @@ class Product
         return $this;
     }
 
-    public function getEtat(): ?string
+    public function getMarque(): ?string
     {
-        return $this->etat;
+        return $this->marque;
     }
 
-    public function setEtat(?string $etat): static
+    public function setMarque(?string $marque): static
     {
-        $this->etat = $etat;
+        $this->marque = $marque;
+
+        return $this;
+    }
+
+    public function getModele(): ?string
+    {
+        return $this->modele;
+    }
+
+    public function setModele(?string $modele): static
+    {
+        $this->modele = $modele;
+
+        return $this;
+    }
+
+    public function getSize(): ?string
+    {
+        return $this->size;
+    }
+
+    public function setSize(?string $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): static
+    {
+        $this->color = $color;
 
         return $this;
     }

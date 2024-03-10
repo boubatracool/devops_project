@@ -1,4 +1,4 @@
-name: Déploiement Symfony sur hébergement mutualisé
+name: Déploiement Symfony
 
 on:
   push:
@@ -6,37 +6,27 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Installation des dépendances
-        run: composer install
-
-      - name: Build de application
-        run: symfony build
-
   deployer:
-    needs: build
     runs-on: ubuntu-latest
 
-    environment:
-      name: production
-      url: ssh://4011x_devops@$JOCBU_FWbD4
-
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - name: Déploiement application
-        run: |
-          ssh ${{ env.url }} "cd /home/clients/917eb16fc5c457e84720fd9e2d457b2c/sites/devops && export PATH=/opt/php8.2/bin:$PATH && git pull origin main && composer install --no-dev --optimize-autoloader && symfony cache:clear --no-warmup && symfony doctrine:migrations:migrate --no-interaction"
-
-      - name: Notification de succès
-        if: always()
-        run: |
-          curl -X POST \
-            -H 'Content-Type: application/json' \
-            -d '{ "text": "Déploiement Symfony réussi sur ${{ env.name }}" }' \
-            https://discord.com/api/webhooks/votre-webhook-id
+      - name: SSH
+        uses: easingthemes/ssh-deploy@v2.1.4
+        with:
+          ssh_key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.APP_HOST }}
+          username: ${{ secrets.APP_USER }}
+          #port: ${{ secrets.APP_PORT }}
+          
+          # commandes à exécuter sur le serveur
+          commands:
+            - export PATH="/opt/php8.2/bin:$PATH"
+            - cd ${{ secrets.APP_PATH }}
+            - composer install --no-dev --optimize-autoloader
+            #- yarn install --production
+            - cp -R public/build/ .
+            - php bin/console doctrine:migrations:migrate --no-interaction
+            - php bin/console cache:clear
+            - sudo service nginx restart

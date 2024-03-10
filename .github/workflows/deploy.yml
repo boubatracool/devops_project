@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Installation des dépendances
         run: composer install
@@ -24,10 +24,10 @@ jobs:
 
     environment:
       name: production
-      url: ssh://${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}
+      url: ssh://4011x_devops@$JOCBU_FWbD4
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Déploiement application
         run: |

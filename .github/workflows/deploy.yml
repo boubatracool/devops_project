@@ -1,0 +1,42 @@
+name: Déploiement Symfony sur hébergement mutualisé
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Installation des dépendances
+        run: composer install
+
+      - name: Build de application
+        run: symfony build
+
+  deployer:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      url: ssh://${{ secrets.APP_USER }}@${{ secrets.APP_HOST }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Déploiement application
+        run: |
+          ssh ${{ env.url }} "cd /home/clients/917eb16fc5c457e84720fd9e2d457b2c/sites/devops && export PATH=/opt/php8.2/bin:$PATH && git pull origin main && composer install --no-dev --optimize-autoloader && symfony cache:clear --no-warmup && symfony doctrine:migrations:migrate --no-interaction"
+
+      - name: Notification de succès
+        if: always()
+        run: |
+          curl -X POST \
+            -H 'Content-Type: application/json' \
+            -d '{ "text": "Déploiement Symfony réussi sur ${{ env.name }}" }' \
+            https://discord.com/api/webhooks/votre-webhook-id

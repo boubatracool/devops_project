@@ -47,8 +47,9 @@ jobs:
           host: ${{ secrets.APP_HOST }}
           username: ${{ secrets.APP_USER }}
           key: ${{ secrets.APP_PRIVATE_KEY }}
-          script: whoami
-            #cd ${{ secrets.APP_PATH }}
+          script: |
+            whoami
+            cd ${{ secrets.APP_PATH }}
             #git pull
             #export PATH="/opt/php8.2/bin:$PATH"
             #composer install --no-dev --optimize-autoloader

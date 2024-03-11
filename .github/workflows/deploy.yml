@@ -46,7 +46,7 @@ jobs:
         with:
           host: ${{ secrets.APP_HOST }}
           username: ${{ secrets.APP_USER }}
-          password: ${{ secrets.APP_PRIVATE_KEY }}
+          key: ${{ secrets.APP_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.APP_PATH }}
             git pull

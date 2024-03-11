@@ -1,4 +1,4 @@
-name: Déploiement Symfony
+name: Deploiement Symfony
 
 on:
   push:
@@ -6,26 +6,43 @@ on:
       - main
 
 jobs:
-  deployer:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: SSH
-        uses: easingthemes/ssh-deploy@v2.1.4
+      - name: Installation des dépendances
+        run: composer install
+
+      - name: Build de l'application
+        run: symfony build
+
+      - name: Test de l'application
+        run: symfony test
+
+  deployer:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      url: https://www.votre-domaine.com
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Déploiement de l'application
+        uses: rsync/rsync-action@v2
         with:
-          ssh_key: ${{ secrets.SSH_KEY }}
-          host: ${{ secrets.APP_HOST }}
-          username: ${{ secrets.APP_USER }}
-          #port: ${{ secrets.APP_PORT }}
-          
-          # commandes à exécuter sur le serveur
-          commands:
-            - cd ${{ secrets.APP_PATH }}
-            - composer install --no-dev --optimize-autoloader
-            #- yarn install --production
-            - cp -R public/build/ .
-            - php bin/console doctrine:migrations:migrate --no-interaction
-            - php bin/console cache:clear
-            - sudo service nginx restart
+          source: ./public/
+          destination: ${{ env.url }}:/var/www/html/
+          exclude: .gitkeep
+
+      - name: Notification de succès
+        if: always()
+        run: |
+          curl -X POST \
+            -H 'Content-Type: application/json' \
+            -d '{ "text": "Déploiement Symfony réussi sur ${{ env.name }}" }' \
+            https://discord.com/api/webhooks/votre-webhook-id

@@ -40,21 +40,24 @@ jobs:
   deployer:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Déploiement de l'application
-        uses: easingthemes/ssh-deploy@v2.1.4
+      - name: Deploy to Staging server
+        uses: easingthemes/ssh-deploy@main
         with:
-          ssh_key: ${{ secrets.APP_PRIVATE_KEY }}
-          host: ${{ secrets.APP_HOST }}
-          username: ${{ secrets.APP_USER }}
-          #port: ${{ secrets.SSH_PORT }}
-          commands: |
+          SSH_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.APP_HOST }}
+          REMOTE_USER: ${{ secrets.APP_USER }}
+          TARGET: ${{ secrets.APP_PATH }}
+          EXCLUDE: "/dist/, /node_modules/, /vendor"
+          SCRIPT_BEFORE: |
+            whoami
+            ls -al
+          SCRIPT_AFTER: |
             cd ${{ secrets.APP_PATH }}
-            git pull
             export PATH="/opt/php8.2/bin:$PATH"
             composer install --no-dev --optimize-autoloader
             APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
             APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
             APP_ENV=dev php bin/console cache:clear
-

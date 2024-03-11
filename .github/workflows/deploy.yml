@@ -19,8 +19,8 @@ jobs:
           echo "${{ secrets.APP_PRIVATE_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan ${{ secrets.APP_USER }}@${{ secrets.APP_HOST }} >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
+#          ssh-keyscan ${{ secrets.APP_USER }}@${{ secrets.APP_HOST }} >> ~/.ssh/known_hosts
+  #        chmod 644 ~/.ssh/known_hosts
 
        # - name: Build de l'application
       #         run: symfony build

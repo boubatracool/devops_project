@@ -42,20 +42,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Staging server
-        uses: easingthemes/ssh-deploy@main
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc -i"
-          SOURCE: "./"
-          REMOTE_HOST: ${{ secrets.APP_HOST }}
-          REMOTE_USER: ${{ secrets.APP_USER }}
-          TARGET: ${{ secrets.APP_PATH }}
-          EXCLUDE: "/dist/, /node_modules/, /vendor"
-          SCRIPT_BEFORE: |
-            whoami
-            ls -al
-          SCRIPT_AFTER: |
+          host: ${{ secrets.APP_HOST }}
+          username: ${{ secrets.APP_USER }}
+          password: ${{ secrets.APP_PRIVATE_KEY }}
+          script: |
             cd ${{ secrets.APP_PATH }}
+            git pull
             export PATH="/opt/php8.2/bin:$PATH"
             composer install --no-dev --optimize-autoloader
             APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction

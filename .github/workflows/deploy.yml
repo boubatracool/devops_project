@@ -12,18 +12,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Installation des dépendances
+      - name: Configuration du SSH
         run: |
           which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
           eval $(ssh-agent -s)
           echo "${{ secrets.APP_PRIVATE_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-#          ssh-keyscan ${{ secrets.APP_USER }}@${{ secrets.APP_HOST }} >> ~/.ssh/known_hosts
-  #        chmod 644 ~/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.APP_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
-       # - name: Build de l'application
-      #         run: symfony build
+      - name: Déploiement de l'application
+        uses: rsync/rsync-action@v3
+        with:
+           source: .
+           destination: ${{ secrets.APP_HOST }}
+           exclude: .gitkeep
 
       #       - name: Test de l'application
 #         run: symfony test

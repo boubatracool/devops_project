@@ -10,10 +10,13 @@
                 <div class="card mb-5 shadow">
                     <img src="{{ product.image }}" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                            the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">
+                            {{ product.category }}<br>
+                            {{ product.size }}<br>
+                            {{ product.prix }}
+                        </p>
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-primary">Detail</a>
                     </div>
                 </div>
             </div>

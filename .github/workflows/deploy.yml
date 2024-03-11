@@ -47,11 +47,11 @@ jobs:
           host: ${{ secrets.APP_HOST }}
           username: ${{ secrets.APP_USER }}
           key: ${{ secrets.APP_PRIVATE_KEY }}
-          script: |
-            cd ${{ secrets.APP_PATH }}
-            git pull
-            export PATH="/opt/php8.2/bin:$PATH"
-            composer install --no-dev --optimize-autoloader
-            APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
-            APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
-            APP_ENV=dev php bin/console cache:clear
+          script: whoami
+            #cd ${{ secrets.APP_PATH }}
+            #git pull
+            #export PATH="/opt/php8.2/bin:$PATH"
+            #composer install --no-dev --optimize-autoloader
+            #APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
+            #APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
+            #APP_ENV=dev php bin/console cache:clear

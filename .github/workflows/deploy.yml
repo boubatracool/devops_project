@@ -51,8 +51,8 @@ jobs:
             whoami
             cd ${{ secrets.APP_PATH }}
             git pull
-            #export PATH="/opt/php8.2/bin:$PATH"
-            #composer install --no-dev --optimize-autoloader
-            #APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
-            #APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
-            #APP_ENV=dev php bin/console cache:clear
+            export PATH="/opt/php8.2/bin:$PATH"
+            composer install --ignore-platform-reqs
+            APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
+            APP_ENV=dev php bin/console doctrine:migrations:migrate --no-interaction
+            APP_ENV=dev php bin/console cache:clear

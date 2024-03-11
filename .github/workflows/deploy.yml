@@ -10,39 +10,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Installation des dépendances
-        run: composer install
-
-      - name: Build de l'application
-        run: symfony build
-
-      - name: Test de l'application
-        run: symfony test
-
-  deployer:
-    needs: build
-    runs-on: ubuntu-latest
-
-    environment:
-      name: production
-      url: https://www.votre-domaine.com
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Déploiement de l'application
-        uses: rsync/rsync-action@v2
-        with:
-          source: ./public/
-          destination: ${{ env.url }}:/var/www/html/
-          exclude: .gitkeep
-
-      - name: Notification de succès
-        if: always()
         run: |
-          curl -X POST \
-            -H 'Content-Type: application/json' \
-            -d '{ "text": "Déploiement Symfony réussi sur ${{ env.name }}" }' \
-            https://discord.com/api/webhooks/votre-webhook-id
+          which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+          eval $(ssh-agent -s)
+          echo "${{ secrets.APP_PRIVATE_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan ${{ secrets.APP_USER }}@${{ secrets.APP_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+       # - name: Build de l'application
+      #         run: symfony build
+
+      #       - name: Test de l'application
+#         run: symfony test
+
+#   deployer:
+#     needs: build
+#     runs-on: ubuntu-latest
+
+#     environment:
+#       name: production
+#       url: https://www.votre-domaine.com
+
+#     steps:
+#       - uses: actions/checkout@v2
+
+#       - name: Déploiement de l'application
+#         uses: rsync/rsync-action@v2
+#         with:
+#           source: ./public/
+#           destination: ${{ env.url }}:/var/www/html/
+#           exclude: .gitkeep
+
+#       - name: Notification de succès
+#         if: always()
+#         run: |
+#           curl -X POST \
+#             -H 'Content-Type: application/json' \
+#             -d '{ "text": "Déploiement Symfony réussi sur ${{ env.name }}" }' \
+#             https://discord.com/api/webhooks/votre-webhook-id

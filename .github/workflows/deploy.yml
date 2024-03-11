@@ -45,13 +45,13 @@ jobs:
       - name: Déploiement de l'application
         uses: burnett01/rsync-deployments@5.2.1
         with:
-          switches: -avzr --delete
+          #switches: -avzr --delete
           path: ./
           remote_path: ${{ secrets.APP_PATH }}
           remote_host: ${{ secrets.APP_HOST }}
           remote_user: ${{ secrets.APP_USER }}
           remote_key: ${{ secrets.APP_PRIVATE_KEY }}
-          commands:
+          commands: |
             cd ${{ secrets.APP_PATH }}
             export PATH="/opt/php8.2/bin:$PATH"
             composer install --no-dev --optimize-autoloader
